@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/codegangsta/cli"
@@ -11,30 +12,17 @@ func main() {
 	app.Name = "zcc"
 	app.Usage = "zcloud code command line"
 	app.Version = "0.1"
-	////cmd := os.Args[1]
-	//cmd := "deploy"
-	//if cmd == "login" {
-	//	user := os.Args[2]
-	//	passwd := os.Args[3]
-	//	login(user, passwd)
-	//}
-	//if cmd == "deploy" {
-	//	user := "/Users/ben/Downloads/cloud-code-template-java-1.0-SNAPSHOT-mod.zip"
-	//	deploy(user)
-	//}
-	//if cmd == "listapps" {
-	//	showApps()
-	//}
-	//if cmd == "use" {
-	//	use(os.Args[2])
-	//}
+	if exists(getSessionPath()) == false && os.Args[1] != "login" {
+		fmt.Println("please login first,use 'login username password'")
+		return
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
 			Usage: "login username password",
 			Action: func(c *cli.Context) {
-				user := c.Args().First()
-				passwd := c.Args().First()
+				user := c.Args().Get(0)
+				passwd := c.Args().Get(1)
 				login(user, passwd)
 
 			},
@@ -63,6 +51,33 @@ func main() {
 				path := c.Args().First()
 				deploy(path)
 
+			},
+		},
+		{
+			Name:  "log",
+			Usage: "log [-lns] <appid>",
+			Action: func(c *cli.Context) {
+				fmt.Println(c.Args())
+				fmt.Println(c.FlagNames())
+				fmt.Println(c.Int("n"))
+				log(c.String("l"), c.Int("n"), c.Int("s"))
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "level,l",
+					Value: "info",
+					Usage: "log level",
+				},
+				cli.IntFlag{
+					Name:  "n",
+					Value: 10,
+					Usage: "number of row shown onetime",
+				},
+				cli.IntFlag{
+					Name:  "s",
+					Value: 0,
+					Usage: " number of row skipped",
+				},
 			},
 		},
 	}

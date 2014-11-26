@@ -51,6 +51,16 @@ func request(method, url string, body io.Reader, headers map[string]string) (*ht
 	}
 	return basicRequest(req)
 }
+func get(url string, ap app, h map[string]string) (*http.Response, error) {
+	headers := make(map[string]string)
+	headers["X-ZCloud-AppId"] = ap.ObjectId
+	headers["X-ZCloud-MasterKey"] = ap.MasterKey
+	headers["Content-Type"] = "application/json"
+	for key, value := range h {
+		headers[key] = value
+	}
+	return request("GET", url, nil, headers)
+}
 
 func CreateFormFile(w *multipart.Writer, filename string) (io.Writer, error) {
 	h := make(textproto.MIMEHeader)

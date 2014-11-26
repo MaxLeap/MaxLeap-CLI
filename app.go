@@ -3,15 +3,21 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"os"
+	"strconv"
+	"strings"
 )
 
 type app struct {
 	Name      string
 	ObjectId  string
 	MasterKey string
+}
+type alog struct {
+	Message, Level, CreateAt string
+}
+type logarray struct {
+	Results []alog
 }
 
 func deploy(path string) {
@@ -24,9 +30,10 @@ func deploy(path string) {
 	req, err := postMultiPart("POST", APIURL+DEPLOY_PATH, path, headers)
 	dealWith(err)
 	fmt.Println(req.StatusCode)
-	io.Copy(os.Stderr, req.Body)
+	body, readErr := ioutil.ReadAll(req.Body)
+	dealWith(readErr)
 	if req.StatusCode == 200 {
-		fmt.Println("success")
+		fmt.Println(body)
 	}
 }
 func use(name string) {
@@ -57,5 +64,25 @@ func getCurrentApp() app {
 }
 func listAppVersions(appid string) {
 }
-func log(appid string) {
+func log(level string, number, skip int) {
+	ap := getCurrentApp()
+	headers := make(map[string]string)
+	headers["limit"] = strconv.Itoa(number)
+	headers["skip"] = strconv.Itoa(skip)
+	resp, err := get(APIURL+LOG_PATH+"/"+level, ap, headers)
+	dealWith(err)
+	fmt.Println(APIURL + LOG_PATH + "/" + level)
+	fmt.Println(resp.StatusCode)
+	contents, ioerr := ioutil.ReadAll(resp.Body)
+	dealWith(ioerr)
+	var logs logarray
+	jsonErr := json.Unmarshal(contents, &logs)
+	dealWith(jsonErr)
+	fmt.Println(string(contents))
+	if resp.StatusCode == 200 {
+		result := logs.Results
+		for i := range result {
+			fmt.Println(result[i].CreateAt + " " + result[i].Level + " " + strings.Replace(result[i].Message, "\n", "", -1))
+		}
+	}
 }
