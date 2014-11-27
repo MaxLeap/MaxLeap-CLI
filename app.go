@@ -13,16 +13,16 @@ type app struct {
 	ObjectId  string
 	MasterKey string
 }
-type alog struct {
-	Message, Level, CreateAt string
-}
-type logarray struct {
-	Results []alog
-}
 
-func deploy(path string) {
+func newApp() (app, error) {
+	ap, err := getCurrentApp()
+	if err != nil {
+		fmt.Println("please choose app first ,by 'use <appname>'")
+	}
+	return ap, err
+}
+func (ap app) deploy(path string) {
 	//body := createFileForm(path)
-	ap := getCurrentApp()
 	fmt.Println(ap)
 	headers := make(map[string]string)
 	headers["X-ZCloud-AppId"] = ap.ObjectId
@@ -54,18 +54,24 @@ func use(name string) {
 	}
 
 }
-func getCurrentApp() app {
-	contents, ioerr := ioutil.ReadFile(getAppPath())
-	dealWith(ioerr)
+func getCurrentApp() (app, error) {
 	var ap app
+	contents, ioerr := ioutil.ReadFile(getAppPath())
+	if ioerr != nil {
+		return ap, ioerr
+	}
 	jsonerr := json.Unmarshal(contents, &ap)
-	dealWith(jsonerr)
-	return ap
+	return ap, jsonerr
 }
 func listAppVersions(appid string) {
 }
-func log(level string, number, skip int) {
-	ap := getCurrentApp()
+func (ap app) log(level string, number, skip int) {
+	type alog struct {
+		Message, Level, CreateAt string
+	}
+	type logarray struct {
+		Results []alog
+	}
 	headers := make(map[string]string)
 	headers["limit"] = strconv.Itoa(number)
 	headers["skip"] = strconv.Itoa(skip)

@@ -17,3 +17,10 @@ func exists(path string) bool {
 	}
 	return false
 }
+func getApp() app {
+	ap, err := newApp()
+	if err != nil {
+		os.Exit(0)
+	}
+	return ap
+}

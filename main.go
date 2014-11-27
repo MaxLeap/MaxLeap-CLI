@@ -37,7 +37,7 @@ func main() {
 			},
 		},
 		{
-			Name:  "lsapps",
+			Name:  "apps",
 			Usage: "",
 			Action: func(c *cli.Context) {
 				showApps()
@@ -49,8 +49,7 @@ func main() {
 			Usage: "deploy filepath",
 			Action: func(c *cli.Context) {
 				path := c.Args().First()
-				deploy(path)
-
+				getApp().deploy(path)
 			},
 		},
 		{
@@ -60,7 +59,7 @@ func main() {
 				fmt.Println(c.Args())
 				fmt.Println(c.FlagNames())
 				fmt.Println(c.Int("n"))
-				log(c.String("l"), c.Int("n"), c.Int("s"))
+				getApp().log(c.String("l"), c.Int("n"), c.Int("s"))
 			},
 			Flags: []cli.Flag{
 				cli.StringFlag{
