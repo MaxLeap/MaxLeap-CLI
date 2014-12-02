@@ -86,7 +86,9 @@ func (ap app) log(level string, number, skip int) {
 	dealWith(jsonErr)
 	if resp.StatusCode == 200 {
 		result := logs.Results
-		for i := range result {
+		upbound := len(result) - 1
+		for j := range result {
+			i := upbound - j
 			fmt.Println(result[i].CreateTime + " " + result[i].Level + " " + strings.Replace(result[i].Message, "\n", "", -1))
 		}
 	}
