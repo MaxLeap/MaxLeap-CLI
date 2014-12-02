@@ -67,7 +67,7 @@ func listAppVersions(appid string) {
 }
 func (ap app) log(level string, number, skip int) {
 	type alog struct {
-		Message, Level, CreateAt string
+		Message, Level, CreateTime string
 	}
 	type logarray struct {
 		Results []alog
@@ -84,11 +84,10 @@ func (ap app) log(level string, number, skip int) {
 	var logs logarray
 	jsonErr := json.Unmarshal(contents, &logs)
 	dealWith(jsonErr)
-	fmt.Println(string(contents))
 	if resp.StatusCode == 200 {
 		result := logs.Results
 		for i := range result {
-			fmt.Println(result[i].CreateAt + " " + result[i].Level + " " + strings.Replace(result[i].Message, "\n", "", -1))
+			fmt.Println(result[i].CreateTime + " " + result[i].Level + " " + strings.Replace(result[i].Message, "\n", "", -1))
 		}
 	}
 }

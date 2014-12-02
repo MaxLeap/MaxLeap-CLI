@@ -53,7 +53,6 @@ func getSession() Ids {
 	data, ioerr := ioutil.ReadFile(getSessionPath())
 	dealWith(ioerr)
 	var ids Ids
-	fmt.Println("new request")
 	fmt.Println(string(data))
 	unmarshalErr := json.Unmarshal(data, &ids)
 	dealWith(unmarshalErr)
