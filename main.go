@@ -45,11 +45,11 @@ func main() {
 			},
 		},
 		{
-			Name:  "deploy",
-			Usage: "deploy filepath",
+			Name:  "upload",
+			Usage: "upload filepath",
 			Action: func(c *cli.Context) {
 				path := c.Args().First()
-				getApp().deploy(path)
+				getApp().upload(path)
 			},
 		},
 		{
@@ -77,6 +77,14 @@ func main() {
 					Value: 0,
 					Usage: " number of row skipped",
 				},
+			},
+		},
+		{
+			Name:  "deploy",
+			Usage: "deploy version",
+			Action: func(c *cli.Context) {
+				version := c.Args().First()
+				getApp().deploy(version)
 			},
 		},
 	}

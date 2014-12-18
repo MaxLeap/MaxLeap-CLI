@@ -61,7 +61,19 @@ func get(url string, ap app, h map[string]string) (*http.Response, error) {
 	}
 	return request("GET", url, nil, headers)
 }
-
+func commonRequst(method, url string, ap app, h map[string]string, body io.Reader) (*http.Response, error) {
+	headers := make(map[string]string)
+	headers["X-ZCloud-AppId"] = ap.ObjectId
+	headers["X-ZCloud-MasterKey"] = ap.MasterKey
+	headers["Content-Type"] = "application/json"
+	for key, value := range h {
+		headers[key] = value
+	}
+	return request(method, url, body, headers)
+}
+func post(url string, ap app, body io.Reader) (*http.Response, error) {
+	return commonRequst("POST", url, ap, nil, body)
+}
 func CreateFormFile(w *multipart.Writer, filename string) (io.Writer, error) {
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", filename))

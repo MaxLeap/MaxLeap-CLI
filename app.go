@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -21,18 +22,46 @@ func newApp() (app, error) {
 	}
 	return ap, err
 }
-func (ap app) deploy(path string) {
+func (ap app) upload(path string) {
 	//body := createFileForm(path)
 	fmt.Println(ap)
 	headers := make(map[string]string)
 	headers["X-ZCloud-AppId"] = ap.ObjectId
 	headers["X-ZCloud-MasterKey"] = ap.MasterKey
-	req, err := postMultiPart("POST", APIURL+DEPLOY_PATH, path, headers)
+	req, err := postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers)
 	dealWith(err)
 	fmt.Println(req.StatusCode)
 	body, readErr := ioutil.ReadAll(req.Body)
 	dealWith(readErr)
 	if req.StatusCode == 200 {
+		fmt.Println(body)
+	}
+}
+
+func (ap app) deploy(v string) {
+	fmt.Println("deploy...")
+	type jversion struct {
+		Version string `json:"version"`
+	}
+	version := jversion{Version: v}
+	b, err := json.Marshal(version)
+	dealWith(err)
+	resp, resperr := post(APIURL+DEPLOY_PATH, ap, bytes.NewReader(b))
+	dealWith(resperr)
+	body, readErr := ioutil.ReadAll(resp.Body)
+	dealWith(readErr)
+	if resp.StatusCode == 200 {
+		fmt.Println(body)
+	}
+
+}
+func (ap app) undeploy() {
+	fmt.Println("undeploy...")
+	resp, resperr := post(APIURL+UNDEPLOY_PATH, ap, nil)
+	dealWith(resperr)
+	body, readErr := ioutil.ReadAll(resp.Body)
+	dealWith(readErr)
+	if resp.StatusCode == 200 {
 		fmt.Println(body)
 	}
 }
