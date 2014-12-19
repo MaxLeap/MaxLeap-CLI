@@ -87,6 +87,13 @@ func main() {
 				getApp().deploy(version)
 			},
 		},
+		{
+			Name:  "lsv",
+			Usage: "list version",
+			Action: func(c *cli.Context) {
+				getApp().listAppVersions()
+			},
+		},
 	}
 	app.Run(os.Args)
 }

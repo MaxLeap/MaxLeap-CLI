@@ -92,7 +92,12 @@ func getCurrentApp() (app, error) {
 	jsonerr := json.Unmarshal(contents, &ap)
 	return ap, jsonerr
 }
-func listAppVersions(appid string) {
+func (ap app) listAppVersions() {
+	resp, err := get(APIURL+LIST_VERSION, ap, nil)
+	dealWith(err)
+	results, readerr := ioutil.ReadAll(resp.Body)
+	dealWith(readerr)
+	fmt.Println(results)
 }
 func (ap app) log(level string, number, skip int) {
 	type alog struct {
