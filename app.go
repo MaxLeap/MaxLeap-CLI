@@ -55,6 +55,7 @@ func formatResult(resp *http.Response, resperr error) {
 	dealWith(resperr)
 	body, readErr := ioutil.ReadAll(resp.Body)
 	dealWith(readErr)
+	fmt.Println(resp.Status)
 	fmt.Println(string(body))
 }
 func (ap app) undeploy() {
@@ -94,7 +95,8 @@ func (ap app) listAppVersions() {
 	dealWith(err)
 	results, readerr := ioutil.ReadAll(resp.Body)
 	dealWith(readerr)
-	fmt.Println(results)
+	fmt.Println(resp.Status)
+	fmt.Println(string(results))
 }
 func (ap app) log(level string, number, skip int) {
 	type alog struct {
@@ -104,11 +106,12 @@ func (ap app) log(level string, number, skip int) {
 		Results []alog
 	}
 	headers := make(map[string]string)
-	headers["limit"] = strconv.Itoa(number)
-	headers["skip"] = strconv.Itoa(skip)
-	resp, err := get(APIURL+LOG_PATH+"/"+level, ap, headers)
+	limit := strconv.Itoa(number)
+	skiped := strconv.Itoa(skip)
+	url := APIURL + LOG_PATH + "/" + level + "?limit=" + limit + "&skip=" + skiped
+	resp, err := get(url, ap, headers)
 	dealWith(err)
-	fmt.Println(APIURL + LOG_PATH + "/" + level)
+	fmt.Println(url)
 	fmt.Println(resp.StatusCode)
 	contents, ioerr := ioutil.ReadAll(resp.Body)
 	dealWith(ioerr)

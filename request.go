@@ -59,6 +59,7 @@ func get(url string, ap app, h map[string]string) (*http.Response, error) {
 	for key, value := range h {
 		headers[key] = value
 	}
+	fmt.Println(headers)
 	return request("GET", url, nil, headers)
 }
 func commonRequst(method, url string, ap app, h map[string]string, body io.Reader) (*http.Response, error) {

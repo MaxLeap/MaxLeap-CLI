@@ -71,7 +71,7 @@ func main() {
 				},
 				cli.IntFlag{
 					Name:  "s",
-					Value: 0,
+					Value: -1,
 					Usage: " number of row skipped",
 				},
 			},
