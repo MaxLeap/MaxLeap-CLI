@@ -12,7 +12,7 @@ func main() {
 	app.Name = "zcc"
 	app.Usage = "zcloud code command line"
 	app.Version = "0.1"
-	if exists(getSessionPath()) == false && os.Args[1] != "login" {
+	if exists(getSessionPath()) == false && (len(os.Args) > 1 && os.Args[1] != "login") {
 		fmt.Println("please login first,use 'login username password'")
 		return
 	}
@@ -54,11 +54,8 @@ func main() {
 		},
 		{
 			Name:  "log",
-			Usage: "log [-lns] <appid>",
+			Usage: "log [-l <info|error>] [-n <number of log>] [-s <number of skipped log>] <appid>",
 			Action: func(c *cli.Context) {
-				fmt.Println(c.Args())
-				fmt.Println(c.FlagNames())
-				fmt.Println(c.Int("n"))
 				getApp().log(c.String("l"), c.Int("n"), c.Int("s"))
 			},
 			Flags: []cli.Flag{
@@ -88,10 +85,17 @@ func main() {
 			},
 		},
 		{
-			Name:  "lsv",
+			Name:  "lv",
 			Usage: "list version",
 			Action: func(c *cli.Context) {
 				getApp().listAppVersions()
+			},
+		},
+		{
+			Name:  "undeploy",
+			Usage: "undeploy",
+			Action: func(c *cli.Context) {
+				getApp().undeploy()
 			},
 		},
 	}

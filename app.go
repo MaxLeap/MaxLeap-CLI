@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -24,48 +26,43 @@ func newApp() (app, error) {
 }
 func (ap app) upload(path string) {
 	//body := createFileForm(path)
-	fmt.Println(ap)
+	checkStrArg(path)
 	headers := make(map[string]string)
 	headers["X-ZCloud-AppId"] = ap.ObjectId
 	headers["X-ZCloud-MasterKey"] = ap.MasterKey
-	req, err := postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers)
-	dealWith(err)
-	fmt.Println(req.StatusCode)
-	body, readErr := ioutil.ReadAll(req.Body)
-	dealWith(readErr)
-	if req.StatusCode == 200 {
-		fmt.Println(body)
+	formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
+
+}
+func checkStrArg(arg string) {
+	if arg == "" {
+		fmt.Println("miss argument,find help with --help")
+		os.Exit(0)
 	}
 }
-
 func (ap app) deploy(v string) {
 	fmt.Println("deploy...")
+	checkStrArg(v)
 	type jversion struct {
 		Version string `json:"version"`
 	}
 	version := jversion{Version: v}
 	b, err := json.Marshal(version)
 	dealWith(err)
-	resp, resperr := post(APIURL+DEPLOY_PATH, ap, bytes.NewReader(b))
+	formatResult(post(APIURL+DEPLOY_PATH, ap, bytes.NewReader(b)))
+
+}
+func formatResult(resp *http.Response, resperr error) {
 	dealWith(resperr)
 	body, readErr := ioutil.ReadAll(resp.Body)
 	dealWith(readErr)
-	if resp.StatusCode == 200 {
-		fmt.Println(body)
-	}
-
+	fmt.Println(string(body))
 }
 func (ap app) undeploy() {
 	fmt.Println("undeploy...")
-	resp, resperr := post(APIURL+UNDEPLOY_PATH, ap, nil)
-	dealWith(resperr)
-	body, readErr := ioutil.ReadAll(resp.Body)
-	dealWith(readErr)
-	if resp.StatusCode == 200 {
-		fmt.Println(body)
-	}
+	formatResult(post(APIURL+UNDEPLOY_PATH, ap, nil))
 }
 func use(name string) {
+	checkStrArg(name)
 	apps := listApps()
 	notExist := true
 	for i := range apps {
