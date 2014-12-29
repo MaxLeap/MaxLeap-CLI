@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func dealWith(err error) {
 	if err != nil {
@@ -23,4 +26,10 @@ func getApp() app {
 		os.Exit(0)
 	}
 	return ap
+}
+func checkStrArg(arg string) {
+	if arg == "" {
+		fmt.Println("miss arguments,find help with --help")
+		os.Exit(0)
+	}
 }

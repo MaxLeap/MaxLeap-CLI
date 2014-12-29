@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -31,13 +30,6 @@ func (ap app) upload(path string) {
 	headers["X-ZCloud-AppId"] = ap.ObjectId
 	headers["X-ZCloud-MasterKey"] = ap.MasterKey
 	formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
-
-}
-func checkStrArg(arg string) {
-	if arg == "" {
-		fmt.Println("miss argument,find help with --help")
-		os.Exit(0)
-	}
 }
 func (ap app) deploy(v string) {
 	fmt.Println("deploy...")

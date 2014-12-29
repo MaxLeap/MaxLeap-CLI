@@ -19,7 +19,7 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
-			Usage: "login username password",
+			Usage: "login <username> <password>",
 			Action: func(c *cli.Context) {
 				user := c.Args().Get(0)
 				passwd := c.Args().Get(1)
@@ -29,7 +29,7 @@ func main() {
 		},
 		{
 			Name:  "use",
-			Usage: "use appname",
+			Usage: "use <appname>",
 			Action: func(c *cli.Context) {
 				app := c.Args().First()
 				use(app)
@@ -46,7 +46,7 @@ func main() {
 		},
 		{
 			Name:  "upload",
-			Usage: "upload filepath",
+			Usage: "upload <filepath>",
 			Action: func(c *cli.Context) {
 				path := c.Args().First()
 				getApp().upload(path)
@@ -78,7 +78,7 @@ func main() {
 		},
 		{
 			Name:  "deploy",
-			Usage: "deploy version",
+			Usage: "deploy <version>",
 			Action: func(c *cli.Context) {
 				version := c.Args().First()
 				getApp().deploy(version)
@@ -86,7 +86,7 @@ func main() {
 		},
 		{
 			Name:  "lv",
-			Usage: "list version",
+			Usage: "lv",
 			Action: func(c *cli.Context) {
 				getApp().listAppVersions()
 			},

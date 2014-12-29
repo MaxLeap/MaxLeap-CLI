@@ -25,6 +25,8 @@ type Ids struct {
 }
 
 func login(username, passwd string) {
+	checkStrArg(username)
+	checkStrArg(passwd)
 	clear()
 	os.Mkdir(getDir(), 0700)
 	os.Chmod(getDir(), 0700)
