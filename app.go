@@ -32,8 +32,6 @@ func (ap app) upload(path string) int {
 	return formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
 }
 func (ap app) deploy(v string) int {
-	fmt.Println("deploy...")
-	checkStrArg(v)
 	type jversion struct {
 		Version string `json:"version"`
 	}

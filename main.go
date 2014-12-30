@@ -101,6 +101,8 @@ func main() {
 			Usage: "deploy <version>",
 			Action: func(c *cli.Context) {
 				version := c.Args().First()
+				checkStrArg(version)
+				fmt.Print("deploy")
 				startWithProgress(func() int { return getApp().deploy(version) })
 			},
 		},
@@ -115,6 +117,7 @@ func main() {
 			Name:  "undeploy",
 			Usage: "undeploy",
 			Action: func(c *cli.Context) {
+				fmt.Print("undeploy")
 				startWithProgress(func() int { return getApp().undeploy() })
 
 			},
