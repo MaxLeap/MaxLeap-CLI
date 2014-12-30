@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -24,9 +23,7 @@ type Ids struct {
 	ObjectId     string
 }
 
-func login(username, passwd string) {
-	checkStrArg(username)
-	checkStrArg(passwd)
+func login(username, passwd string) bool {
 	clear()
 	os.Mkdir(getDir(), 0700)
 	os.Chmod(getDir(), 0700)
@@ -34,30 +31,28 @@ func login(username, passwd string) {
 	data := userinfo{Loginid: username, Password: passwd}
 	bdata, marshalErr := json.Marshal(data)
 	dealWith(marshalErr)
-	fmt.Println(string(bdata))
 	req, reqErr := http.NewRequest("POST", APIURL+LOGIN_PATH, bytes.NewReader(bdata))
 	dealWith(reqErr)
-	fmt.Println(APIURL + LOGIN_PATH)
 	req.Header.Add("Content-Type", "application/json")
 	dealWith(reqErr)
 	resp, respErr := client.Do(req)
 	dealWith(respErr)
+	if resp.StatusCode != 200 {
+		return false
+	}
 	var response Ids
-	fmt.Println(resp.StatusCode)
 	contents, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("is %s\n", string(contents))
 	fileErr := ioutil.WriteFile(getSessionPath(), contents, 0644)
 	dealWith(fileErr)
 	unmarshalErr := json.Unmarshal(contents, &response)
 	dealWith(unmarshalErr)
+	return true
 }
 func getSession() Ids {
 	data, ioerr := ioutil.ReadFile(getSessionPath())
 	dealWith(ioerr)
 	var ids Ids
-	fmt.Println(string(data))
 	unmarshalErr := json.Unmarshal(data, &ids)
 	dealWith(unmarshalErr)
-	fmt.Println("ids:" + ids.SessionToken)
 	return ids
 }

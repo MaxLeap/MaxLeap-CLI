@@ -19,11 +19,27 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
-			Usage: "login <username> <password>",
+			Usage: "login <username>",
 			Action: func(c *cli.Context) {
 				user := c.Args().Get(0)
-				passwd := c.Args().Get(1)
-				login(user, passwd)
+				checkStrArg(user)
+				for i := 0; i < 3; i++ {
+					passwd, err := GetPass("enter password:")
+					if err != nil {
+						fmt.Println("can't get password")
+						return
+					}
+					if login(user, passwd) {
+						fmt.Println("login success")
+						break
+					} else {
+						if i < 2 {
+							fmt.Println("Permission denied, please try again.")
+						} else {
+							fmt.Println("Permission denied")
+						}
+					}
+				}
 
 			},
 		},
@@ -49,12 +65,18 @@ func main() {
 			Usage: "upload <filepath>",
 			Action: func(c *cli.Context) {
 				path := c.Args().First()
-				getApp().upload(path)
+				chann := make(chan int)
+				go func() {
+					status := getApp().upload(path)
+					chann <- status
+				}()
+				fmt.Print("upload")
+				showProgress(chann)
 			},
 		},
 		{
 			Name:  "log",
-			Usage: "log [-l <info|error>] [-n <number of log>] [-s <number of skipped log>] <appid>",
+			Usage: "log [-l <info|error>] [-n <number of log>] [-s <number of skipped log>]",
 			Action: func(c *cli.Context) {
 				getApp().log(c.String("l"), c.Int("n"), c.Int("s"))
 			},
@@ -96,6 +118,13 @@ func main() {
 			Usage: "undeploy",
 			Action: func(c *cli.Context) {
 				getApp().undeploy()
+			},
+		},
+		{
+			Name:  "logout",
+			Usage: "logout",
+			Action: func(c *cli.Context) {
+				clear()
 			},
 		},
 	}

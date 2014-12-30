@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/user"
 )
@@ -17,5 +18,8 @@ func getAppPath() string {
 	return getDir() + "/.app"
 }
 func clear() {
-	os.Remove(getDir())
+	err := os.RemoveAll(getDir())
+	if err != nil {
+		fmt.Println(err)
+	}
 }

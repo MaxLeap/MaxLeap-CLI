@@ -23,13 +23,13 @@ func newApp() (app, error) {
 	}
 	return ap, err
 }
-func (ap app) upload(path string) {
+func (ap app) upload(path string) int {
 	//body := createFileForm(path)
 	checkStrArg(path)
 	headers := make(map[string]string)
 	headers["X-ZCloud-AppId"] = ap.ObjectId
 	headers["X-ZCloud-MasterKey"] = ap.MasterKey
-	formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
+	return formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
 }
 func (ap app) deploy(v string) {
 	fmt.Println("deploy...")
@@ -43,15 +43,15 @@ func (ap app) deploy(v string) {
 	formatResult(post(APIURL+DEPLOY_PATH, ap, bytes.NewReader(b)))
 
 }
-func formatResult(resp *http.Response, resperr error) {
+func formatResult(resp *http.Response, resperr error) int {
 	dealWith(resperr)
 	body, readErr := ioutil.ReadAll(resp.Body)
 	dealWith(readErr)
-	fmt.Println(resp.Status)
+	fmt.Println(resp.StatusCode)
 	fmt.Println(string(body))
+	return resp.StatusCode
 }
 func (ap app) undeploy() {
-	fmt.Println("undeploy...")
 	formatResult(post(APIURL+UNDEPLOY_PATH, ap, nil))
 }
 func use(name string) {
