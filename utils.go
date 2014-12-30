@@ -53,3 +53,11 @@ func showProgress(ch chan int) {
 		time.Sleep(time.Second)
 	}
 }
+func startWithProgress(fn func() int) {
+	chann := make(chan int)
+	go func() {
+		status := fn()
+		chann <- status
+	}()
+	showProgress(chann)
+}

@@ -65,13 +65,11 @@ func main() {
 			Usage: "upload <filepath>",
 			Action: func(c *cli.Context) {
 				path := c.Args().First()
-				chann := make(chan int)
-				go func() {
-					status := getApp().upload(path)
-					chann <- status
-				}()
+				fn := func() int {
+					return getApp().upload(path)
+				}
 				fmt.Print("upload")
-				showProgress(chann)
+				startWithProgress(fn)
 			},
 		},
 		{
@@ -103,7 +101,7 @@ func main() {
 			Usage: "deploy <version>",
 			Action: func(c *cli.Context) {
 				version := c.Args().First()
-				getApp().deploy(version)
+				startWithProgress(func() int { return getApp().deploy(version) })
 			},
 		},
 		{
@@ -117,7 +115,8 @@ func main() {
 			Name:  "undeploy",
 			Usage: "undeploy",
 			Action: func(c *cli.Context) {
-				getApp().undeploy()
+				startWithProgress(func() int { return getApp().undeploy() })
+
 			},
 		},
 		{
