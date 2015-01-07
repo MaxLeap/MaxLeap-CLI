@@ -45,7 +45,7 @@ func formatResult(resp *http.Response, resperr error) int {
 	dealWith(resperr)
 	body, readErr := ioutil.ReadAll(resp.Body)
 	dealWith(readErr)
-	fmt.Println(resp.StatusCode)
+	fmt.Println()
 	fmt.Println(string(body))
 	return resp.StatusCode
 }
@@ -101,8 +101,6 @@ func (ap app) log(level string, number, skip int) {
 	url := APIURL + LOG_PATH + "/" + level + "?limit=" + limit + "&skip=" + skiped
 	resp, err := get(url, ap, headers)
 	dealWith(err)
-	fmt.Println(url)
-	fmt.Println(resp.StatusCode)
 	contents, ioerr := ioutil.ReadAll(resp.Body)
 	dealWith(ioerr)
 	var logs logarray

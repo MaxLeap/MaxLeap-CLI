@@ -40,8 +40,11 @@ func postMultiPart(method, url, filePath string, headers map[string]string) (*ht
 }
 func basicRequest(req *http.Request) (*http.Response, error) {
 	client := http.Client{}
-	return client.Do(req)
-
+	resp, err := client.Do(req)
+	if resp.StatusCode == 401 {
+		fmt.Println("permission denied! try login again.")
+	}
+	return resp, err
 }
 func request(method, url string, body io.Reader, headers map[string]string) (*http.Response, error) {
 	req, reqerr := http.NewRequest(method, url, body)
@@ -59,7 +62,6 @@ func get(url string, ap app, h map[string]string) (*http.Response, error) {
 	for key, value := range h {
 		headers[key] = value
 	}
-	fmt.Println(headers)
 	return request("GET", url, nil, headers)
 }
 func commonRequst(method, url string, ap app, h map[string]string, body io.Reader) (*http.Response, error) {
@@ -70,7 +72,9 @@ func commonRequst(method, url string, ap app, h map[string]string, body io.Reade
 	for key, value := range h {
 		headers[key] = value
 	}
-	return request(method, url, body, headers)
+	resp, err := request(method, url, body, headers)
+
+	return resp, err
 }
 func post(url string, ap app, body io.Reader) (*http.Response, error) {
 	return commonRequst("POST", url, ap, nil, body)

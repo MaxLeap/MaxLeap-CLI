@@ -13,7 +13,7 @@ func main() {
 	app.Usage = "zcloud code command line"
 	app.Version = "0.1"
 	if exists(getSessionPath()) == false && (len(os.Args) > 1 && os.Args[1] != "login") {
-		fmt.Println("please login first,use 'login username password'")
+		fmt.Println("please login first,use 'login username'")
 		return
 	}
 	app.Commands = []cli.Command{
