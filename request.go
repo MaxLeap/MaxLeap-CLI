@@ -41,6 +41,9 @@ func postMultiPart(method, url, filePath string, headers map[string]string) (*ht
 func basicRequest(req *http.Request) (*http.Response, error) {
 	client := http.Client{}
 	resp, err := client.Do(req)
+	if err != nil {
+		return resp, err
+	}
 	if resp.StatusCode == 401 {
 		fmt.Println("permission denied! try login again.")
 	}

@@ -2,7 +2,7 @@ package main
 
 const APIVERSION = "/2.0"
 
-//const APIURL string = "http://apiuat.zcloud.io"
+//const APIURL string = "http://10.10.10.176:8080"
 
 const APIURL string = "https://api.appcube.io"
 const LOGIN_PATH = APIVERSION + "/orgUsers/login2"

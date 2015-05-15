@@ -31,10 +31,12 @@ func (ap app) upload(path string) int {
 	headers["X-ZCloud-MasterKey"] = ap.MasterKey
 	return formatResult(postMultiPart("POST", APIURL+UPLOAD_PATH, path, headers))
 }
+
+type jversion struct {
+	Version string `json:"version"`
+}
+
 func (ap app) deploy(v string) int {
-	type jversion struct {
-		Version string `json:"version"`
-	}
 	version := jversion{Version: v}
 	b, err := json.Marshal(version)
 	dealWith(err)
@@ -49,8 +51,11 @@ func formatResult(resp *http.Response, resperr error) int {
 	fmt.Println(string(body))
 	return resp.StatusCode
 }
-func (ap app) undeploy() int {
-	return formatResult(post(APIURL+UNDEPLOY_PATH, ap, nil))
+func (ap app) undeploy(v string) int {
+	version := jversion{Version: v}
+	b, err := json.Marshal(version)
+	dealWith(err)
+	return formatResult(post(APIURL+UNDEPLOY_PATH, ap, bytes.NewReader(b)))
 }
 func use(name string) {
 	checkStrArg(name)
