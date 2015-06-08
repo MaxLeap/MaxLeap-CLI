@@ -14,7 +14,7 @@ import (
 func sessionRequest(method, url, contentType string, body io.Reader) (*http.Response, error) {
 	ids := getSession()
 	headers := make(map[string]string)
-	headers["X-ZCloud-Session-Token"] = ids.SessionToken
+	headers["X-LAS-Session-Token"] = ids.SessionToken
 	headers["Content-Type"] = contentType
 	return request(method, url, body, headers)
 }
@@ -59,8 +59,8 @@ func request(method, url string, body io.Reader, headers map[string]string) (*ht
 }
 func get(url string, ap app, h map[string]string) (*http.Response, error) {
 	headers := make(map[string]string)
-	headers["X-ZCloud-AppId"] = ap.ObjectId
-	headers["X-ZCloud-MasterKey"] = ap.MasterKey
+	headers["X-LAS-AppId"] = ap.ObjectId
+	headers["X-LAS-MasterKey"] = ap.MasterKey
 	headers["Content-Type"] = "application/json"
 	for key, value := range h {
 		headers[key] = value
@@ -69,8 +69,8 @@ func get(url string, ap app, h map[string]string) (*http.Response, error) {
 }
 func commonRequst(method, url string, ap app, h map[string]string, body io.Reader) (*http.Response, error) {
 	headers := make(map[string]string)
-	headers["X-ZCloud-AppId"] = ap.ObjectId
-	headers["X-ZCloud-MasterKey"] = ap.MasterKey
+	headers["X-LAS-AppId"] = ap.ObjectId
+	headers["X-LAS-MasterKey"] = ap.MasterKey
 	headers["Content-Type"] = "application/json"
 	for key, value := range h {
 		headers[key] = value
