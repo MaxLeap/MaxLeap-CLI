@@ -39,6 +39,7 @@ func postMultiPart(method, url, filePath string, headers map[string]string) (*ht
 	return basicRequest(req)
 }
 func basicRequest(req *http.Request) (*http.Response, error) {
+	req.Header.Set("X-LAS-Client-Version", SERVER_VERSION)
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
