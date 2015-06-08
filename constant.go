@@ -1,6 +1,6 @@
 package main
 
-const APIVERSION = "/2.0"
+const APIVERSION = ""
 const APIURL string = "http://10.10.10.176:8080"
 const LOGIN_PATH = APIVERSION + "/orgUsers/login2"
 const UPLOAD_PATH = APIVERSION + "/cloudcode" + "/upload"
