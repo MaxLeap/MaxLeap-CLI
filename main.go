@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/codegangsta/cli"
+	"github.com/howeyc/gopass"
 )
 
 func main() {
@@ -24,12 +25,9 @@ func main() {
 				user := c.Args().Get(0)
 				checkStrArg(user)
 				for i := 0; i < 3; i++ {
-					passwd, err := GetPass("enter password:")
-					if err != nil {
-						fmt.Println("can't get password")
-						return
-					}
-					if login(user, passwd) {
+					fmt.Print("enter password:")
+					passwd := gopass.GetPasswd()
+					if login(user, string(passwd)) {
 						fmt.Println("login success")
 						break
 					} else {
