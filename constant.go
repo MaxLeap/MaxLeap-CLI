@@ -1,7 +1,7 @@
 package main
 
 const APIVERSION = ""
-const APIURL string = "http://10.10.10.176:8080"
+const APIURL string = "http://10.10.10.193:8080"
 const LOGIN_PATH = APIVERSION + "/orgUsers/login2"
 const UPLOAD_PATH = APIVERSION + "/cloudcode" + "/upload"
 const LIST_APPS_PATH = APIVERSION + "/apps"
