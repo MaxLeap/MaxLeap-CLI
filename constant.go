@@ -1,7 +1,7 @@
 package main
 
 const APIVERSION = "/2.0"
-const APIURL string = "https://api.appcube.io"
+const APIURL string = "https://api.maxleap.cn"
 const LOGIN_PATH = APIVERSION + "/orgUsers/login2"
 const UPLOAD_PATH = APIVERSION + "/cloudcode" + "/upload"
 const LIST_APPS_PATH = APIVERSION + "/apps"
