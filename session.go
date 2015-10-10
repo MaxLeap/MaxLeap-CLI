@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -22,11 +21,10 @@ type Ids struct {
 	UserType     int
 	ObjectId     string
 }
-
-func login(username, passwd string) bool {
-	clear()
-	os.Mkdir(getDir(), 0700)
-	os.Chmod(getDir(), 0700)
+type Session struct {
+	ids Ids
+}
+func (session Session)login(username, passwd string)(bool) {
 	client := &http.Client{}
 	data := userinfo{Loginid: username, Password: passwd}
 	bdata, marshalErr := json.Marshal(data)
@@ -42,17 +40,11 @@ func login(username, passwd string) bool {
 	}
 	var response Ids
 	contents, _ := ioutil.ReadAll(resp.Body)
-	fileErr := ioutil.WriteFile(getSessionPath(), contents, 0644)
-	dealWith(fileErr)
 	unmarshalErr := json.Unmarshal(contents, &response)
 	dealWith(unmarshalErr)
+	session.ids=response
 	return true
 }
-func getSession() Ids {
-	data, ioerr := ioutil.ReadFile(getSessionPath())
-	dealWith(ioerr)
-	var ids Ids
-	unmarshalErr := json.Unmarshal(data, &ids)
-	dealWith(unmarshalErr)
-	return ids
+func (session Session)getSession() Ids {
+	return session
 }
