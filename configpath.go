@@ -17,6 +17,9 @@ func getDir() string {
 func getAppPath() string {
 	return getDir() + "/.app"
 }
+func getHostPath() string{
+	return getDir()+"/.host"
+}
 func clear() {
 	err := os.RemoveAll(getDir())
 	if err != nil {

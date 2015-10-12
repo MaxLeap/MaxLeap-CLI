@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-
+	"github.com/howeyc/gopass"
 	"github.com/codegangsta/cli"
 )
 
@@ -16,21 +16,28 @@ func main() {
 		fmt.Println("please login first,use 'login username'")
 		return
 	}
+	host=getHostString()
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
-			Usage: "login <username>",
+			Usage: "login <username> [-region <region,default:"+ region+ "("+host+")>]",
 			Action: func(c *cli.Context) {
 				user := c.Args().Get(0)
 				checkStrArg(user)
+				region=c.String("region")
+				if region=="CN" {
+					host=CN
+				}else if region=="US"{
+					host=US
+				}else {
+					host=region
+				}
 				for i := 0; i < 3; i++ {
-					passwd, err := GetPass("enter password:")
-					if err != nil {
-						fmt.Println("can't get password")
-						return
-					}
+					fmt.Print("enter password:")
+					passwd:=string(gopass.GetPasswd())
 					if login(user, passwd) {
 						fmt.Println("login success")
+						persistHostString()
 						break
 					} else {
 						if i < 2 {
@@ -41,6 +48,13 @@ func main() {
 					}
 				}
 
+			},
+			Flags:[]cli.Flag{
+				cli.StringFlag{
+					Name:  "region",
+					Value: region,
+					Usage: "choose region,US or CN ...",
+				},
 			},
 		},
 		{

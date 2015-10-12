@@ -56,3 +56,21 @@ func getSession() Ids {
 	dealWith(unmarshalErr)
 	return ids
 }
+
+func persistHostString(){
+	err := ioutil.WriteFile(getHostPath(),[]byte(host), 0700)
+	dealWith(err)
+}
+func getHostString() string{
+	if data,ioerr:=ioutil.ReadFile(getHostPath());ioerr==nil{
+		return string(data)
+	}else {
+		if region=="CN" {
+			host=CN
+		}else if region=="US"{
+			host=US
+		}
+		return host
+	}
+
+}
