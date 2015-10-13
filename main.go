@@ -9,7 +9,7 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "zcc"
+	app.Name = "maxleap"
 	app.Usage = "zcloud code command line"
 	app.Version = "0.1"
 	if exists(getSessionPath()) == false && (len(os.Args) > 1 && os.Args[1] != "login") {
