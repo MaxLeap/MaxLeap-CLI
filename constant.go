@@ -1,11 +1,11 @@
 package main
 
 const APIVERSION = "/2.0"
-var host string=US
-var region string="US"
+var host string
+var region string
 const US string = "api.appcube.io"
 const CN string = "api.maxleap.cn"
-var APIURL string = "https://"+host
+var APIURL string
 const LOGIN_PATH = APIVERSION + "/orgUsers/login2"
 const UPLOAD_PATH = APIVERSION + "/cloudcode" + "/upload"
 const LIST_APPS_PATH = APIVERSION + "/apps"

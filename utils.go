@@ -8,7 +8,9 @@ import (
 
 func dealWith(err error) {
 	if err != nil {
-		panic(err)
+		fmt.Println()
+		fmt.Println("error:  "+err.Error())
+		os.Exit(1)
 	}
 }
 func exists(path string) bool {

@@ -16,28 +16,26 @@ func main() {
 		fmt.Println("please login first,use 'login username'")
 		return
 	}
-	host=getHostString()
+	if(len(os.Args) > 1 && os.Args[1] != "login"){
+		initHostString()
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
-			Usage: "login <username> [-region <region,default:"+ region+ "("+host+")>]",
+			Usage: "login <username> -region <region,CN or US>",
 			Action: func(c *cli.Context) {
 				user := c.Args().Get(0)
 				checkStrArg(user)
 				region=c.String("region")
-				if region=="CN" {
-					host=CN
-				}else if region=="US"{
-					host=US
-				}else {
-					host=region
+				if region==""{
+					fmt.Println("miss region,please use -region <CN or US ...> to define the region")
+					return
 				}
 				for i := 0; i < 3; i++ {
 					fmt.Print("enter password:")
 					passwd:=string(gopass.GetPasswd())
 					if login(user, passwd) {
-						fmt.Println("login success")
-						persistHostString()
+						//fmt.Println("login success")
 						break
 					} else {
 						if i < 2 {

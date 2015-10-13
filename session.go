@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"fmt"
 )
 
 type userinfo struct {
@@ -27,6 +28,19 @@ func login(username, passwd string) bool {
 	clear()
 	os.Mkdir(getDir(), 0700)
 	os.Chmod(getDir(), 0700)
+	if "CN" == region{
+		host=CN
+	}else if "US"==region{
+		host=US
+	}else {
+		host=region
+	}
+	result:=login2(username,passwd,host)
+	persistHostString()
+	return result
+}
+func login2(username,passwd,url string) bool{
+	APIURL="https://"+url
 	client := &http.Client{}
 	data := userinfo{Loginid: username, Password: passwd}
 	bdata, marshalErr := json.Marshal(data)
@@ -61,16 +75,13 @@ func persistHostString(){
 	err := ioutil.WriteFile(getHostPath(),[]byte(host), 0700)
 	dealWith(err)
 }
-func getHostString() string{
+func initHostString() {
 	if data,ioerr:=ioutil.ReadFile(getHostPath());ioerr==nil{
-		return string(data)
+		host=string(data)
+		APIURL="https://"+host
 	}else {
-		if region=="CN" {
-			host=CN
-		}else if region=="US"{
-			host=US
-		}
-		return host
+		fmt.Println("pls login first")
 	}
+
 
 }
