@@ -90,7 +90,6 @@ func (ap app) listAppVersions() {
 	dealWith(err)
 	results, readerr := ioutil.ReadAll(resp.Body)
 	dealWith(readerr)
-	fmt.Println(resp.Status)
 	fmt.Println(string(results))
 }
 func (ap app) log(level string, number, skip int) {
