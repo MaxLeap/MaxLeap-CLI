@@ -10,7 +10,6 @@ func dealWith(err error) {
 	if err != nil {
 		fmt.Println()
 		fmt.Println("error:  "+err.Error())
-		os.Exit(1)
 	}
 }
 func exists(path string) bool {
@@ -23,13 +22,7 @@ func exists(path string) bool {
 	}
 	return false
 }
-func getApp() app {
-	ap, err := newApp()
-	if err != nil {
-		os.Exit(0)
-	}
-	return ap
-}
+
 func println(content string) {
 	fmt.Println(content)
 }

@@ -15,13 +15,16 @@ type app struct {
 	ObjectId  string
 	MasterKey string
 }
+var currentApp * app
 
-func newApp() (app, error) {
-	ap, err := getCurrentApp()
-	if err != nil {
+func handle(handler func(a *app)) {
+	ap:=getCurrentApp()
+	if ap == nil {
 		fmt.Println("please choose app first ,by 'use <appname>'")
+	}else {
+		handler(ap)
 	}
-	return ap, err
+
 }
 func (ap app) upload(path string) int {
 	//body := createFileForm(path)
@@ -63,11 +66,7 @@ func use(name string) {
 	notExist := true
 	for i := range apps {
 		if apps[i].Name == name {
-			contents, marshalErr := json.Marshal(apps[i])
-			dealWith(marshalErr)
-			path := getAppPath()
-			err := ioutil.WriteFile(path, contents, 0700)
-			dealWith(err)
+			currentApp=&apps[i]
 			notExist = false
 		}
 	}
@@ -76,22 +75,19 @@ func use(name string) {
 	}
 
 }
-func getCurrentApp() (app, error) {
-	var ap app
-	contents, ioerr := ioutil.ReadFile(getAppPath())
-	if ioerr != nil {
-		return ap, ioerr
-	}
-	jsonerr := json.Unmarshal(contents, &ap)
-	return ap, jsonerr
+func getCurrentApp() (*app) {
+	return currentApp
 }
-func (ap app) listAppVersions() {
+func (ap app) listAppVersions() string {
 	resp, err := get(APIURL+LIST_VERSION, ap, nil)
 	dealWith(err)
-	results, readerr := ioutil.ReadAll(resp.Body)
-	dealWith(readerr)
-	fmt.Println(resp.Status)
-	fmt.Println(string(results))
+	var results string=""
+	if resp.StatusCode==200 {
+		bytesRes, readerr := ioutil.ReadAll(resp.Body)
+		results=string(bytesRes)
+		dealWith(readerr)
+	}
+	return string(results)
 }
 func (ap app) log(level string, number, skip int) {
 	type alog struct {
@@ -118,5 +114,31 @@ func (ap app) log(level string, number, skip int) {
 			i := upbound - j
 			fmt.Println(result[i].CreateTime + " " + result[i].Level + " " + strings.Replace(result[i].Message, "\n", "", -1))
 		}
+	}
+}
+func listApps() []app {
+	resp, err := sessionRequest("GET", APIURL+LIST_APPS_PATH, "application/json", nil)
+	dealWith(err)
+	contents, ioerr := ioutil.ReadAll(resp.Body)
+	dealWith(ioerr)
+	apps := make([]app, 0)
+	json.Unmarshal(contents, &apps)
+	return apps
+}
+func showApps() {
+	apps := listApps()
+	if len(apps) <= 0 {
+		println("no apps")
+		return
+	}
+	fmt.Println()
+	fmt.Print("appid")
+	for i := 0; i < len(apps[0].ObjectId)-5; i++ {
+		fmt.Print(" ")
+	}
+	fmt.Println(" appname")
+	fmt.Println()
+	for i := range apps {
+		fmt.Println(apps[i].ObjectId + ":" + apps[i].Name)
 	}
 }

@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"time"
-	"fmt"
 )
 
 type userinfo struct {
@@ -23,11 +21,9 @@ type Ids struct {
 	UserType     int
 	ObjectId     string
 }
-
+var session Ids
+var on bool=true
 func login(username, passwd string) bool {
-	clear()
-	os.Mkdir(getDir(), 0700)
-	os.Chmod(getDir(), 0700)
 	if "CN" == region{
 		host=CN
 	}else if "US"==region{
@@ -36,7 +32,6 @@ func login(username, passwd string) bool {
 		host=region
 	}
 	result:=login2(username,passwd,host)
-	persistHostString()
 	return result
 }
 func login2(username,passwd,url string) bool{
@@ -54,34 +49,13 @@ func login2(username,passwd,url string) bool{
 	if resp.StatusCode != 200 {
 		return false
 	}
-	var response Ids
 	contents, _ := ioutil.ReadAll(resp.Body)
-	fileErr := ioutil.WriteFile(getSessionPath(), contents, 0644)
-	dealWith(fileErr)
-	unmarshalErr := json.Unmarshal(contents, &response)
+	unmarshalErr := json.Unmarshal(contents, &session)
 	dealWith(unmarshalErr)
 	return true
 }
 func getSession() Ids {
-	data, ioerr := ioutil.ReadFile(getSessionPath())
-	dealWith(ioerr)
-	var ids Ids
-	unmarshalErr := json.Unmarshal(data, &ids)
-	dealWith(unmarshalErr)
-	return ids
+	return session
 }
 
-func persistHostString(){
-	err := ioutil.WriteFile(getHostPath(),[]byte(host), 0700)
-	dealWith(err)
-}
-func initHostString() {
-	if data,ioerr:=ioutil.ReadFile(getHostPath());ioerr==nil{
-		host=string(data)
-		APIURL="https://"+host
-	}else {
-		fmt.Println("pls login first")
-	}
 
-
-}

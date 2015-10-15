@@ -3,22 +3,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"cli"
+	"github.com/benile/readlikeflags"
 	"github.com/howeyc/gopass"
-	"github.com/codegangsta/cli"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "maxleap"
 	app.Usage = "zcloud code command line"
-	app.Version = "0.1"
-	if exists(getSessionPath()) == false && (len(os.Args) > 1 && os.Args[1] != "login") {
-		fmt.Println("please login first,use 'login username'")
-		return
-	}
-	if(len(os.Args) > 1 && os.Args[1] != "login"){
-		initHostString()
-	}
+	app.Version = "0.2"
 	app.Commands = []cli.Command{
 		{
 			Name:  "login",
@@ -26,16 +20,16 @@ func main() {
 			Action: func(c *cli.Context) {
 				user := c.Args().Get(0)
 				checkStrArg(user)
-				region=c.String("region")
-				if region==""{
+				region = c.String("region")
+				if region == "" {
 					fmt.Println("miss region,please use -region <CN or US ...> to define the region")
 					return
 				}
 				for i := 0; i < 3; i++ {
 					fmt.Print("enter password:")
-					passwd:=string(gopass.GetPasswd())
+					passwd := string(gopass.GetPasswdMasked())
 					if login(user, passwd) {
-						//fmt.Println("login success")
+						readlikeflags.StartSession(getCommands(),nil,app.Usage,app.Version)
 						break
 					} else {
 						if i < 2 {
@@ -53,94 +47,6 @@ func main() {
 					Value: region,
 					Usage: "choose region,US or CN ...",
 				},
-			},
-		},
-		{
-			Name:  "use",
-			Usage: "use <appname>",
-			Action: func(c *cli.Context) {
-				app := c.Args().First()
-				use(app)
-
-			},
-		},
-		{
-			Name:  "apps",
-			Usage: "",
-			Action: func(c *cli.Context) {
-				showApps()
-
-			},
-		},
-		{
-			Name:  "upload",
-			Usage: "upload <filepath>",
-			Action: func(c *cli.Context) {
-				path := c.Args().First()
-				fn := func() int {
-					return getApp().upload(path)
-				}
-				fmt.Print("upload")
-				startWithProgress(fn)
-			},
-		},
-		{
-			Name:  "log",
-			Usage: "log [-l <info|error>] [-n <number of log>] [-s <number of skipped log>]",
-			Action: func(c *cli.Context) {
-				getApp().log(c.String("l"), c.Int("n"), c.Int("s"))
-			},
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "level,l",
-					Value: "info",
-					Usage: "log level",
-				},
-				cli.IntFlag{
-					Name:  "n",
-					Value: 10,
-					Usage: "number of row shown onetime",
-				},
-				cli.IntFlag{
-					Name:  "s",
-					Value: -1,
-					Usage: " number of row skipped",
-				},
-			},
-		},
-		{
-			Name:  "deploy",
-			Usage: "deploy <version>",
-			Action: func(c *cli.Context) {
-				version := c.Args().First()
-				checkStrArg(version)
-				fmt.Print("deploy")
-				startWithProgress(func() int { return getApp().deploy(version) })
-			},
-		},
-		{
-			Name:  "lv",
-			Usage: "lv",
-			Action: func(c *cli.Context) {
-				getApp().listAppVersions()
-			},
-		},
-		{
-			Name:  "undeploy",
-			Usage: "undeploy <version>",
-			Action: func(c *cli.Context) {
-				version := c.Args().First()
-				checkStrArg(version)
-				fmt.Print("undeploy")
-				startWithProgress(func() int { return getApp().undeploy(version) })
-
-			},
-		},
-		{
-			Name:  "logout",
-			Usage: "logout",
-			Action: func(c *cli.Context) {
-				clear()
 			},
 		},
 	}
