@@ -1,48 +1,12 @@
 package main
 import (
 	"fmt"
-	"github.com/howeyc/gopass"
     "github.com/benile/cli"
 	"github.com/benile/readlikeflags"
 )
 
 func getCommands()[]cli.Command{
 	return []cli.Command{
-		{
-			Name:  "login",
-			Usage: "login <username> -region <region,CN or US>",
-			Action: func(c *cli.Context) {
-				user := c.Args().Get(0)
-				checkStrArg(user)
-				region=c.String("region")
-				if region==""{
-					fmt.Println("miss region,please use -region <CN or US ...> to define the region")
-					return
-				}
-				for i := 0; i < 3; i++ {
-					fmt.Print("enter password:")
-					passwd:=string(gopass.GetPasswd())
-					if login(user, passwd) {
-						//fmt.Println("login success")
-						break
-					} else {
-						if i < 2 {
-							fmt.Println("Permission denied, please try again.")
-						} else {
-							fmt.Println("Permission denied")
-						}
-					}
-				}
-
-			},
-			Flags:[]cli.Flag{
-				cli.StringFlag{
-					Name:  "region",
-					Value: region,
-					Usage: "choose region,US or CN ...",
-				},
-			},
-		},
 		{
 			Name:  "use",
 			Usage: "use <appname>",
@@ -54,7 +18,7 @@ func getCommands()[]cli.Command{
 		},
 		{
 			Name:  "apps",
-			Usage: "",
+			Usage: "list apps",
 			Action: func(c *cli.Context) {
 				showApps()
 

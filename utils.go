@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"errors"
 )
 
 func dealWith(err error) {
 	if err != nil {
 		fmt.Println()
-		fmt.Println("error:  "+err.Error())
+		panic(err)
 	}
 }
 func exists(path string) bool {
@@ -28,9 +29,9 @@ func println(content string) {
 }
 func checkStrArg(arg string) {
 	if arg == "" {
-		fmt.Println("miss arguments,find help with --help")
-		os.Exit(0)
+		panic(errors.New("miss arguments,find help with --help"))
 	}
+
 }
 func showProgress(ch chan int) {
 	for {

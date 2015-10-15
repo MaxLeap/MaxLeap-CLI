@@ -29,7 +29,12 @@ func main() {
 					fmt.Print("enter password:")
 					passwd := string(gopass.GetPasswdMasked())
 					if login(user, passwd) {
-						readlikeflags.StartSession(getCommands(),nil,app.Usage,app.Version)
+						errorHandler:= func(err error) {
+							fmt.Println(err.Error())
+						}
+						readlikeflags.StartSession(
+							readlikeflags.Options{
+								getCommands(),nil,app.Usage,app.Version,errorHandler,app.Name})
 						break
 					} else {
 						if i < 2 {
